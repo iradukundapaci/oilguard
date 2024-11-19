@@ -14,8 +14,6 @@ import {
   DeleteOperation,
 } from "src/__shared__/decorators";
 import { GenericResponse } from "src/__shared__/dto/generic-response.dto";
-import { Authorize } from "src/auth/decorators/authorize.decorator";
-import { JwtGuard } from "src/auth/guards/jwt.guard";
 import { CreateSensorDataDto } from "./dto/create-sensor-data.dto";
 import { FetchSensorDataDto } from "./dto/fetch-sensor-data.dto";
 import { UpdateSensorDataDto } from "./dto/update-sensor-data.dto";
@@ -28,7 +26,6 @@ export class SensorDataController {
 
   @PostOperation("", "Create SensorData")
   @CreatedResponse()
-  @Authorize(JwtGuard)
   @ApiRequestBody(CreateSensorDataDto.Input)
   @ErrorResponses(UnauthorizedResponse, ForbiddenResponse)
   async createSensorData(
@@ -40,7 +37,6 @@ export class SensorDataController {
 
   @GetOperation("", "Find All SensorData")
   @PaginatedOkResponse(FetchSensorDataDto.Output)
-  @Authorize(JwtGuard)
   @ErrorResponses(UnauthorizedResponse, ForbiddenResponse)
   async getAllSensorData(
     @Query() fetchSensorDataDto: FetchSensorDataDto.Input,
@@ -50,7 +46,6 @@ export class SensorDataController {
 
   @GetOperation(":id", "Find One SensorData")
   @OkResponse(UpdateSensorDataDto.Output)
-  @Authorize(JwtGuard)
   @ErrorResponses(UnauthorizedResponse, ForbiddenResponse)
   async getSensorData(
     @Param("id") id: number,
@@ -62,7 +57,6 @@ export class SensorDataController {
 
   @PostOperation(":id", "Update SensorData")
   @OkResponse(UpdateSensorDataDto.Output)
-  @Authorize(JwtGuard)
   @ApiRequestBody(UpdateSensorDataDto.Input)
   @ErrorResponses(UnauthorizedResponse, ForbiddenResponse)
   async updateSensorData(
@@ -74,7 +68,6 @@ export class SensorDataController {
 
   @DeleteOperation(":id", "Delete SensorData")
   @OkResponse()
-  @Authorize(JwtGuard)
   @ErrorResponses(UnauthorizedResponse, ForbiddenResponse)
   async removeSensorData(@Param("id") id: number) {
     await this.sensorDataService.removeTaskById(id);

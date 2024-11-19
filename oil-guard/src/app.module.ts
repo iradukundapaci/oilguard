@@ -22,6 +22,7 @@ import { PipelineModule } from "./pipeline/pipeline.module";
 import { AnomalyModule } from "./anomaly/anomaly.module";
 import { SensorModule } from "./sensor/sensor.module";
 import { MqttModule } from "./mqtt/mqtt.module";
+import { AnalyticsModule } from "./analytics/analytics.module";
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { MqttModule } from "./mqtt/mqtt.module";
     ReportModule,
     SensorModule,
     MqttModule,
+    AnalyticsModule,
   ],
   providers: [
     {

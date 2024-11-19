@@ -34,7 +34,7 @@ export class SensorDataService {
     const queryBuilder = this.sensorDataRepository
       .createQueryBuilder("sensorData")
       .leftJoinAndSelect("sensorData.sensor", "sensor")
-      .orderBy("sensorData.id", "DESC");
+      .orderBy("sensorData.createdAt", "DESC");
 
     return await paginate(queryBuilder, {
       page: dto.page,
