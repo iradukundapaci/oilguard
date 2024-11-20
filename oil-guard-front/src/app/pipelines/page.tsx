@@ -5,14 +5,14 @@ import UsersClient from "@/components/Users/UsersClient";
 
 export const metadata: Metadata = {
   title: "Oil Guard",
-  description: "List of poachers",
+  description: "List of pipelines",
 };
 
-export default function PoachersPage() {
+export default function PipelinePage() {
   return (
     <DefaultLayout>
-      <Breadcrumb pageName="Poachers" />
-      <UsersClient role="POACHER" />
+      <Breadcrumb pageName="Pipelines" />
+      <UsersClient role="Pipeline" />
     </DefaultLayout>
   );
 }

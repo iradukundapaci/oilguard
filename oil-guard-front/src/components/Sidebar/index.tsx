@@ -39,20 +39,6 @@ const menuGroups = [
             height="24"
             viewBox="0 0 24 24"
           >
-            <path d="M20.84 4.61l-1.8-1.8a2.29 2.29 0 00-3.2 0L13.05 6.6a5.5 5.5 0 00-7.34 8.01l4.13 4.13a5.5 5.5 0 008.02-7.34l2.14-2.14a2.29 2.29 0 000-3.2z" />
-          </svg>
-        ),
-        label: "Pipelines",
-        route: "/pipelines",
-      },
-      {
-        icon: (
-          <svg
-            className="fill-current"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-          >
             <path d="M12 2l4 4h-3v9h-2V6H8l4-4zm-6 8v10h12V10H6zm2 8v-6h8v6H8z" />
           </svg>
         ),

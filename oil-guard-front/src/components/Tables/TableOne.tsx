@@ -51,7 +51,11 @@ export default function SensorsPage() {
 
   const columns = [
     { key: "pipelineName", label: "Pipeline Name" },
-    { key: "online", label: "Online" },
+    {
+      key: "online",
+      label: "Online",
+      render: (row: Sensor) => (row.online ? "Online" : "Offline"),
+    },
     { key: "latitude", label: "Latitude" },
     { key: "longitude", label: "Longitude" },
     {
