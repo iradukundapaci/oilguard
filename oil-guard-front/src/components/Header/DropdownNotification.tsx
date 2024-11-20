@@ -1,42 +1,51 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import ClickOutside from "@/components/ClickOutside";
-import Image from "next/image";
+import io from "socket.io-client";
 
+// Example notification template
 const notificationList = [
-  {
-    image: "/images/user/user-15.png",
-    title: "Piter Joined the Team!",
-    subTitle: "Congratulate him",
-  },
-  {
-    image: "/images/user/user-02.png",
-    title: "New message received",
-    subTitle: "Devid sent you new message",
-  },
-  {
-    image: "/images/user/user-26.png",
-    title: "New Payment received",
-    subTitle: "Check your earnings",
-  },
-  {
-    image: "/images/user/user-28.png",
-    title: "Jolly completed tasks",
-    subTitle: "Assign her newtasks",
-  },
-  {
-    image: "/images/user/user-27.png",
-    title: "Roman Joined the Team!",
-    subTitle: "Congratulate him",
-  },
+  // We'll generate notifications dynamically from the predictions
 ];
 
 const DropdownNotification = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [notifying, setNotifying] = useState(true);
+  const [predictions, setPredictions] = useState<any[]>([]); // Prediction structure: [{id, timestamp}, ...]
+
+  useEffect(() => {
+    const socket = io("http://localhost:8000"); // replace with your server URL
+
+    socket.on(
+      "prediction",
+      (
+        predictionsData: Record<
+          string,
+          { anomaly: boolean; timestamp: number }
+        >,
+      ) => {
+        // Filter predictions for anomalies (where anomaly is true)
+        const filteredPredictions = Object.keys(predictionsData)
+          .filter((key) => predictionsData[key].anomaly) // Only show anomalies
+          .map((key) => ({
+            id: key,
+            timestamp: predictionsData[key].timestamp,
+          }));
+
+        setPredictions(filteredPredictions);
+      },
+    );
+
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
 
   return (
-    <ClickOutside onClick={() => setDropdownOpen(false)} className="relative hidden sm:block">
+    <ClickOutside
+      onClick={() => setDropdownOpen(false)}
+      className="relative hidden sm:block"
+    >
       <li>
         <Link
           onClick={() => {
@@ -63,11 +72,7 @@ const DropdownNotification = () => {
               />
             </svg>
 
-            <span
-              className={`absolute -top-0.5 right-0 z-1 h-2.5 w-2.5 rounded-full border-2 border-gray-2 bg-red-light dark:border-dark-3 ${
-                !notifying ? "hidden" : "inline"
-              }`}
-            >
+            <span className="absolute -top-0.5 right-0 z-1 h-2.5 w-2.5 rounded-full border-2 border-gray-2 bg-red-light dark:border-dark-3">
               <span className="absolute -z-1 inline-flex h-full w-full animate-ping rounded-full bg-red-light opacity-75"></span>
             </span>
           </span>
@@ -82,49 +87,43 @@ const DropdownNotification = () => {
                 Notifications
               </h5>
               <span className="rounded-md bg-primary px-2 py-0.5 text-body-xs font-medium text-white">
-                5 new
+                {predictions.length} new
               </span>
             </div>
 
             <ul className="no-scrollbar mb-5 flex h-auto flex-col gap-1 overflow-y-auto">
-              {notificationList.map((item, index) => (
+              {predictions.map((prediction, index) => (
                 <li key={index}>
                   <Link
                     className="flex items-center gap-4 rounded-[10px] p-2.5 hover:bg-gray-2 dark:hover:bg-dark-3"
                     href="#"
                   >
-                    <span className="block h-14 w-14 rounded-full">
-                      <Image
-                        width={112}
-                        height={112}
-                        src={item.image}
-                        style={{
-                          width: "auto",
-                          height: "auto",
-                        }}
-                        alt="User"
-                      />
+                    <span className="block flex h-14 w-14 items-center justify-center rounded-full bg-red-500">
+                      {/* Danger icon */}
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        fill="white"
+                        viewBox="0 0 24 24"
+                      >
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 14h-2v-2h2zm0-4h-2V7h2z" />
+                      </svg>
                     </span>
 
                     <span className="block">
                       <span className="block font-medium text-dark dark:text-white">
-                        {item.title}
+                        Anomaly Detected in sensor {prediction.id}
                       </span>
                       <span className="block text-body-sm font-medium text-dark-5 dark:text-dark-6">
-                        {item.subTitle}
+                        Timestamp:{" "}
+                        {new Date(prediction.timestamp * 1000).toLocaleString()}
                       </span>
                     </span>
                   </Link>
                 </li>
               ))}
             </ul>
-
-            <Link
-              className="flex items-center justify-center rounded-[7px] border border-primary p-2.5 font-medium text-primary hover:bg-blue-light-5 dark:border-dark-4 dark:text-dark-6 dark:hover:border-primary dark:hover:bg-blue-light-3 dark:hover:text-primary"
-              href="#"
-            >
-              See all notifications
-            </Link>
           </div>
         )}
       </li>

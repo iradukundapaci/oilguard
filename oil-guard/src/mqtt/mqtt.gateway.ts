@@ -23,7 +23,7 @@ export class MqttGateway implements OnModuleInit {
     });
 
     this.client.on("message", (topic, message) => {
-      this.handleMessage(message.toString());
+      this.handleMessage(topic, message.toString());
     });
 
     this.client.on("error", (error) => {
@@ -32,6 +32,7 @@ export class MqttGateway implements OnModuleInit {
   }
 
   private subscribeToTopics() {
+    // Subscribe to both sensor/data and prediction topics
     this.client.subscribe("sensor/data", (err) => {
       if (err) {
         console.error("Subscription error:", err.message);
@@ -39,9 +40,23 @@ export class MqttGateway implements OnModuleInit {
         console.log("Subscribed to topic: sensor/data");
       }
     });
+
+    this.client.subscribe("sensor/predictions", (err) => {
+      if (err) {
+        console.error("Subscription error:", err.message);
+      } else {
+        console.log("Subscribed to topic: prediction");
+      }
+    });
   }
 
-  private handleMessage(message: string) {
-    this.server.emit("sensor-data", JSON.parse(message));
+  private handleMessage(topic: string, message: string) {
+    if (topic === "sensor/data") {
+      this.server.emit("sensor-data", JSON.parse(message));
+    }
+
+    if (topic === "sensor/predictions") {
+      this.server.emit("prediction", JSON.parse(message));
+    }
   }
 }

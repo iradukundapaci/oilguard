@@ -9,12 +9,18 @@ services:
       - ./mosquitto/data:/mosquitto/data
 
   mqtt-simulator:
-    build:
-      context: .
+    image: paciradukunda/oil-guard-mqtt-simulator
     container_name: mqtt-simulator
     environment:
       - SENSORS=5
       - WAIT_TIME=10
+    depends_on:
+      - mosquitto
+    restart: always
+
+  oilguard-model:
+    image: paciradukunda/oilguard-model
+    container_name: oilguard-model
     depends_on:
       - mosquitto
     restart: always
