@@ -2,6 +2,7 @@ import { OnModuleInit } from "@nestjs/common";
 import { WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
 import { connect, MqttClient } from "mqtt";
 import { Server } from "socket.io";
+import { MqttService } from "./mqtt.service";
 
 @WebSocketGateway({
   cors: {
@@ -10,6 +11,8 @@ import { Server } from "socket.io";
 })
 export class MqttGateway implements OnModuleInit {
   private client: MqttClient;
+
+  constructor(private readonly mqttService: MqttService) {}
 
   @WebSocketServer()
   server: Server;
@@ -53,6 +56,7 @@ export class MqttGateway implements OnModuleInit {
   private handleMessage(topic: string, message: string) {
     if (topic === "sensor/data") {
       this.server.emit("sensor-data", JSON.parse(message));
+      this.mqttService.create(message);
     }
 
     if (topic === "sensor/predictions") {

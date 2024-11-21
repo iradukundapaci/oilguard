@@ -12,8 +12,8 @@ services:
     image: paciradukunda/oil-guard-mqtt-simulator
     container_name: mqtt-simulator
     environment:
-      - SENSORS=5
-      - WAIT_TIME=10
+      - SENSORS=4
+      - WAIT_TIME=60
     depends_on:
       - mosquitto
     restart: always
