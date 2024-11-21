@@ -19,54 +19,57 @@ import AddIcon from "@mui/icons-material/Add";
 import axios from "axios";
 import { DataTable } from "../Tables/Datatable";
 
-type Sensor = {
+type Pipeline = {
   id: number;
-  online: boolean;
-  latitude: number;
-  longitude: number;
-  pipelineName: string;
+  name: string;
+  status: "Open" | "Closed";
+  lastInspectionDate: string;
+  pipeLineAge: number;
 };
 
-export default function SensorsPage() {
-  const [sensors, setSensors] = useState<Sensor[]>([]);
-  const [totalSensors, setTotalSensors] = useState<number>(0);
+export default function PipelinesPage() {
+  const [pipelines, setPipelines] = useState<Pipeline[]>([]);
+  const [totalPipelines, setTotalPipelines] = useState<number>(0);
   const [page, setPage] = useState<number>(0);
   const [rowsPerPage, setRowsPerPage] = useState<number>(5);
 
   const [modalOpen, setModalOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
-  const [newSensor, setNewSensor] = useState<Sensor>({
+  const [newPipeline, setNewPipeline] = useState<Pipeline>({
     id: 0,
-    online: false,
-    latitude: 0,
-    longitude: 0,
-    pipelineName: "",
+    name: "",
+    status: "Open",
+    lastInspectionDate: new Date().toISOString(),
+    pipeLineAge: 0,
   });
 
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
 
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [sensorToDelete, setSensorToDelete] = useState<Sensor | null>(null);
+  const [pipelineToDelete, setPipelineToDelete] = useState<Pipeline | null>(
+    null,
+  );
 
   const columns = [
-    { key: "pipelineName", label: "Pipeline Name" },
+    { key: "name", label: "Pipeline Name" },
+    { key: "status", label: "Status" },
     {
-      key: "online",
-      label: "Online",
-      render: (row: Sensor) => (row.online ? "Online" : "Offline"),
+      key: "lastInspectionDate",
+      label: "Last Inspection Date",
+      render: (row: Pipeline) =>
+        new Date(row.lastInspectionDate).toLocaleDateString(),
     },
-    { key: "latitude", label: "Latitude" },
-    { key: "longitude", label: "Longitude" },
+    { key: "pipeLineAge", label: "Pipeline Age (Years)" },
     {
       key: "actions",
       label: "Actions",
-      render: (row: Sensor) => (
+      render: (row: Pipeline) => (
         <Stack direction="row" spacing={1}>
-          <IconButton onClick={() => handleEditSensor(row)}>
+          <IconButton onClick={() => handleEditPipeline(row)}>
             <EditIcon />
           </IconButton>
-          <IconButton onClick={() => handleDeleteSensor(row)}>
+          <IconButton onClick={() => handleDeletePipeline(row)}>
             <DeleteIcon />
           </IconButton>
         </Stack>
@@ -77,10 +80,10 @@ export default function SensorsPage() {
   const getToken = () => localStorage.getItem("accessToken") || "";
 
   useEffect(() => {
-    const fetchSensors = async () => {
+    const fetchPipelines = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:8000/api/v1/sensors",
+          "http://localhost:8000/api/v1/pipelines",
           {
             params: { page: page + 1, size: rowsPerPage },
             headers: {
@@ -90,22 +93,14 @@ export default function SensorsPage() {
         );
 
         const { items, meta } = response.data.payload;
-        const allSensors = items.map((sensor: any) => ({
-          id: sensor.id,
-          online: sensor.online,
-          latitude: sensor.latitude,
-          longitude: sensor.longitude,
-          pipelineName: sensor.pipeline.name,
-        }));
-
-        setSensors(allSensors);
-        setTotalSensors(meta.totalItems);
+        setPipelines(items);
+        setTotalPipelines(meta.totalItems);
       } catch (error) {
-        console.error("Failed to fetch sensors", error);
+        console.error("Failed to fetch pipelines", error);
       }
     };
 
-    fetchSensors();
+    fetchPipelines();
   }, [page, rowsPerPage]);
 
   const handlePageChange = (_: unknown, newPage: number) => setPage(newPage);
@@ -120,61 +115,52 @@ export default function SensorsPage() {
   const handleOpenModal = () => {
     setModalOpen(true);
     setIsEditMode(false);
-    setNewSensor({
+    setNewPipeline({
       id: 0,
-      online: false,
-      latitude: 0,
-      longitude: 0,
-      pipelineName: "",
+      name: "",
+      status: "Open",
+      lastInspectionDate: new Date().toISOString(),
+      pipeLineAge: 0,
     });
   };
 
-  const handleCloseModal = () => {
-    setModalOpen(false);
-    setNewSensor({
-      id: 0,
-      online: false,
-      latitude: 0,
-      longitude: 0,
-      pipelineName: "",
-    });
-  };
+  const handleCloseModal = () => setModalOpen(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type, checked } = e.target;
-    setNewSensor((prev) => ({
+    const { name, value } = e.target;
+    setNewPipeline((prev) => ({
       ...prev,
-      [name]: type === "checkbox" ? checked : value,
+      [name]: value,
     }));
   };
 
-  const handleCreateSensor = async () => {
+  const handleCreatePipeline = async () => {
     try {
-      await axios.post("http://localhost:8000/api/v1/sensors", newSensor, {
+      await axios.post("http://localhost:8000/api/v1/pipelines", newPipeline, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${getToken()}`,
         },
       });
-      setSnackbarMessage("Sensor created successfully!");
+      setSnackbarMessage("Pipeline created successfully!");
       setSnackbarOpen(true);
       handleCloseModal();
     } catch (error) {
-      console.error("Failed to create sensor", error);
+      console.error("Failed to create pipeline", error);
     }
   };
 
-  const handleEditSensor = (sensor: Sensor) => {
-    setNewSensor(sensor);
+  const handleEditPipeline = (pipeline: Pipeline) => {
+    setNewPipeline(pipeline);
     setIsEditMode(true);
     setModalOpen(true);
   };
 
-  const handleUpdateSensor = async () => {
+  const handleUpdatePipeline = async () => {
     try {
       await axios.patch(
-        `http://localhost:8000/api/v1/sensors/${newSensor.id}`,
-        newSensor,
+        `http://localhost:8000/api/v1/pipelines/${newPipeline.id}`,
+        newPipeline,
         {
           headers: {
             "Content-Type": "application/json",
@@ -182,35 +168,35 @@ export default function SensorsPage() {
           },
         },
       );
-      setSnackbarMessage("Sensor updated successfully!");
+      setSnackbarMessage("Pipeline updated successfully!");
       setSnackbarOpen(true);
       handleCloseModal();
     } catch (error) {
-      console.error("Failed to update sensor", error);
+      console.error("Failed to update pipeline", error);
     }
   };
 
-  const handleDeleteSensor = (sensor: Sensor) => {
-    setSensorToDelete(sensor);
+  const handleDeletePipeline = (pipeline: Pipeline) => {
+    setPipelineToDelete(pipeline);
     setDeleteDialogOpen(true);
   };
 
-  const confirmDeleteSensor = async () => {
+  const confirmDeletePipeline = async () => {
     try {
       await axios.delete(
-        `http://localhost:8000/api/v1/sensors/${sensorToDelete?.id}`,
+        `http://localhost:8000/api/v1/pipelines/${pipelineToDelete?.id}`,
         {
           headers: {
             Authorization: `Bearer ${getToken()}`,
           },
         },
       );
-      setSnackbarMessage("Sensor deleted successfully!");
+      setSnackbarMessage("Pipeline deleted successfully!");
       setSnackbarOpen(true);
       setDeleteDialogOpen(false);
-      setSensorToDelete(null);
+      setPipelineToDelete(null);
     } catch (error) {
-      console.error("Failed to delete sensor", error);
+      console.error("Failed to delete pipeline", error);
     }
   };
 
@@ -228,64 +214,72 @@ export default function SensorsPage() {
           variant="contained"
           onClick={handleOpenModal}
         >
-          Add Sensor
+          Add Pipeline
         </Button>
       </Stack>
 
       <DataTable
         columns={columns}
-        rows={sensors}
-        count={totalSensors}
+        rows={pipelines}
+        count={totalPipelines}
         page={page}
         rowsPerPage={rowsPerPage}
         onPageChange={handlePageChange}
         onRowsPerPageChange={handleRowsPerPageChange}
       />
 
-      {/* Create/Edit Sensor Modal */}
+      {/* Create/Edit Pipeline Modal */}
       <Dialog open={modalOpen} onClose={handleCloseModal}>
         <DialogTitle>
-          {isEditMode ? "Edit Sensor" : "Create Sensor"}
+          {isEditMode ? "Edit Pipeline" : "Create Pipeline"}
         </DialogTitle>
         <DialogContent>
           <TextField
-            name="pipelineName"
+            name="name"
             label="Pipeline Name"
             fullWidth
             margin="dense"
-            value={newSensor.pipelineName}
+            value={newPipeline.name}
             onChange={handleInputChange}
           />
           <TextField
-            name="online"
-            label="Online"
+            name="status"
+            label="Status"
             fullWidth
             margin="dense"
-            value={newSensor.online}
-            onChange={handleInputChange}
-            type="checkbox"
-          />
-          <TextField
-            name="latitude"
-            label="Latitude"
-            fullWidth
-            margin="dense"
-            value={newSensor.latitude}
+            value={newPipeline.status}
             onChange={handleInputChange}
           />
           <TextField
-            name="longitude"
-            label="Longitude"
+            name="lastInspectionDate"
+            label="Last Inspection Date"
+            type="datetime-local"
             fullWidth
             margin="dense"
-            value={newSensor.longitude}
+            value={new Date(newPipeline.lastInspectionDate)
+              .toISOString()
+              .slice(0, -1)}
+            onChange={(e) =>
+              setNewPipeline((prev) => ({
+                ...prev,
+                lastInspectionDate: new Date(e.target.value).toISOString(),
+              }))
+            }
+          />
+          <TextField
+            name="pipeLineAge"
+            label="Pipeline Age"
+            type="number"
+            fullWidth
+            margin="dense"
+            value={newPipeline.pipeLineAge}
             onChange={handleInputChange}
           />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseModal}>Cancel</Button>
           <Button
-            onClick={isEditMode ? handleUpdateSensor : handleCreateSensor}
+            onClick={isEditMode ? handleUpdatePipeline : handleCreatePipeline}
             variant="contained"
           >
             {isEditMode ? "Update" : "Create"}
@@ -300,12 +294,12 @@ export default function SensorsPage() {
       >
         <DialogTitle>Confirm Delete</DialogTitle>
         <DialogContent>
-          Are you sure you want to delete this sensor?
+          Are you sure you want to delete this pipeline?
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setDeleteDialogOpen(false)}>Cancel</Button>
           <Button
-            onClick={confirmDeleteSensor}
+            onClick={confirmDeletePipeline}
             color="error"
             variant="contained"
           >
@@ -320,11 +314,7 @@ export default function SensorsPage() {
         autoHideDuration={3000}
         onClose={handleSnackbarClose}
       >
-        <Alert
-          onClose={handleSnackbarClose}
-          severity="success"
-          sx={{ width: "100%" }}
-        >
+        <Alert severity="success" onClose={handleSnackbarClose}>
           {snackbarMessage}
         </Alert>
       </Snackbar>

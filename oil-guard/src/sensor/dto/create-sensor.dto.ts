@@ -1,10 +1,10 @@
-import { IsNotEmpty, IsNumber, IsString } from "class-validator";
+import { IsNotEmpty, IsString } from "class-validator";
 
 export namespace CreateSensorDto {
   export class Input {
-    @IsNumber()
+    @IsString()
     @IsNotEmpty()
-    pipeline: number;
+    pipelineName: string;
 
     @IsString()
     @IsNotEmpty()

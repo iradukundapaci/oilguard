@@ -31,7 +31,6 @@ export class AnomalyController {
   @PostOperation("", "Create anomaly")
   @CreatedResponse()
   @ApiRequestBody(CreateAnomalyDto.Input)
-  @Authorize(JwtGuard)
   @ErrorResponses(UnauthorizedResponse, ForbiddenResponse)
   async createAnomaly(
     @Body() createAnomalyDto: CreateAnomalyDto.Input,
@@ -43,7 +42,6 @@ export class AnomalyController {
 
   @GetOperation("", "Get all anomaly")
   @PaginatedOkResponse(FetchAnomalyDto.Output)
-  @Authorize(JwtGuard)
   @ErrorResponses(UnauthorizedResponse, ForbiddenResponse)
   async getAllAnomaly(
     @Query() fetchAnomalyDto: FetchAnomalyDto.Input,
@@ -55,7 +53,6 @@ export class AnomalyController {
 
   @GetOperation(":id", "Get anomaly")
   @OkResponse(AnomalyDto.Output)
-  @Authorize(JwtGuard)
   @ErrorResponses(UnauthorizedResponse, ForbiddenResponse)
   async getAnomaly(
     @Param("id") id: number,
@@ -68,7 +65,6 @@ export class AnomalyController {
 
   @PatchOperation(":id", "Update anomaly")
   @OkResponse()
-  @Authorize(JwtGuard)
   @ApiRequestBody(UpdateAnomalyDto.Output)
   @ErrorResponses(UnauthorizedResponse, ForbiddenResponse)
   async updateAnomaly(
@@ -85,7 +81,6 @@ export class AnomalyController {
 
   @DeleteOperation(":id", "Delete anomaly")
   @OkResponse()
-  @Authorize(JwtGuard)
   @ErrorResponses(UnauthorizedResponse, ForbiddenResponse)
   async removeAnomaly(@Param("id") id: number): Promise<GenericResponse> {
     await this.anomalyService.removeAnomalyById(id);

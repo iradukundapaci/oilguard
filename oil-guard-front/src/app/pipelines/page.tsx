@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import DefaultLayout from "@/components/Layouts/DefaultLaout";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
-import UsersClient from "@/components/Users/UsersClient";
+import PipelinesPage from "@/components/Tables/PipelineTable";
 
 export const metadata: Metadata = {
   title: "Oil Guard",
@@ -12,7 +12,7 @@ export default function PipelinePage() {
   return (
     <DefaultLayout>
       <Breadcrumb pageName="Pipelines" />
-      <UsersClient role="Pipeline" />
+      <PipelinesPage />
     </DefaultLayout>
   );
 }

@@ -32,7 +32,6 @@ export class ReportController {
   @PostOperation("", "Create report")
   @CreatedResponse()
   @ErrorResponses(UnauthorizedResponse, ForbiddenResponse)
-  @Authorize(JwtGuard)
   async createReport(
     @Body() createReportDto: CreateReportDto.Input,
     @GetUser("id") userId: number,
@@ -43,7 +42,6 @@ export class ReportController {
 
   @GetOperation("", "Get all reports")
   @PaginatedOkResponse(FetchReportDto.Output)
-  @Authorize(JwtGuard)
   @ErrorResponses(UnauthorizedResponse, ForbiddenResponse)
   async getAllReport(@Query() fetchReportDto: FetchReportDto.Input) {
     const response = await this.reportsService.findAllReport(fetchReportDto);
@@ -52,7 +50,6 @@ export class ReportController {
 
   @GetOperation(":id", "Get report")
   @OkResponse(ReportDto.Output)
-  @Authorize(JwtGuard)
   @ErrorResponses(UnauthorizedResponse, ForbiddenResponse)
   async getReport(
     @Param("id") id: number,
@@ -65,7 +62,6 @@ export class ReportController {
 
   @PatchOperation(":id", "Update report")
   @OkResponse()
-  @Authorize(JwtGuard)
   @ApiRequestBody(ReportDto.Output)
   @ErrorResponses(UnauthorizedResponse, ForbiddenResponse)
   async updateReport(
@@ -82,7 +78,6 @@ export class ReportController {
 
   @DeleteOperation(":id", "Delete report")
   @OkResponse()
-  @Authorize(JwtGuard)
   @ErrorResponses(UnauthorizedResponse, ForbiddenResponse)
   async removeReport(@Param("id") id: number): Promise<GenericResponse> {
     await this.reportsService.removeReportById(id);

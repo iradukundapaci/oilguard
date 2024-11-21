@@ -9,10 +9,6 @@ export namespace CreatePipelineDto {
 
     @IsString()
     @IsNotEmpty()
-    location: string;
-
-    @IsString()
-    @IsNotEmpty()
     status: string;
 
     @IsString()

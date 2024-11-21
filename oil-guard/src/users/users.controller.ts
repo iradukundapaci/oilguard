@@ -33,7 +33,6 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @OkResponse(FetchProfileDto.OutPut)
-  @Authorize(JwtGuard)
   @GetOperation("profile", "user profile")
   @ErrorResponses(UnauthorizedResponse, ForbiddenResponse, NotFoundResponse)
   async getProfile(
@@ -56,7 +55,6 @@ export class UsersController {
   }
 
   @OkResponse(FetchProfileDto.OutPut)
-  @Authorize(JwtGuard)
   @GetOperation(":id", "get a user")
   @ErrorResponses(UnauthorizedResponse, ForbiddenResponse, NotFoundResponse)
   async getUser(
@@ -77,7 +75,6 @@ export class UsersController {
     BadRequestResponse,
   )
   @PatchOperation("profile", "update user profile")
-  @Authorize(JwtGuard)
   async updateProfile(
     @GetUser() user: User,
     @Body() updateProfileDto: UpdateProfileDto.Input,
@@ -91,7 +88,6 @@ export class UsersController {
 
   @DeleteOperation(":id", "delete a user")
   @OkResponse()
-  @Authorize(JwtGuard)
   @ErrorResponses(UnauthorizedResponse, ForbiddenResponse, NotFoundResponse)
   async deleteUser(@Param("id") id: number): Promise<GenericResponse> {
     await this.usersService.deleteUser(id);

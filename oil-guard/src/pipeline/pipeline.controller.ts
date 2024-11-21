@@ -29,7 +29,6 @@ export class PipelineController {
 
   @PostOperation("", "Create new pipeline")
   @CreatedResponse()
-  @Authorize(JwtGuard)
   @ApiRequestBody(CreatePipelineDto.Input)
   @ErrorResponses(UnauthorizedResponse, ForbiddenResponse)
   async createPipeline(@Body() createPipelineDto: CreatePipelineDto.Input) {
@@ -39,7 +38,6 @@ export class PipelineController {
 
   @GetOperation("", "Get all pipelines")
   @PaginatedOkResponse(FetchPipelineDto.Output)
-  @Authorize(JwtGuard)
   @ErrorResponses(UnauthorizedResponse)
   async getAllPipeline(
     @Query() fetchPipelineDto: FetchPipelineDto.Input,
@@ -51,7 +49,6 @@ export class PipelineController {
 
   @GetOperation(":id", "Get pipeline by id")
   @OkResponse(CreatePipelineDto.Output)
-  @Authorize(JwtGuard)
   @ErrorResponses(UnauthorizedResponse, ForbiddenResponse)
   async getCustomer(
     @Param("id") id: number,
@@ -63,7 +60,6 @@ export class PipelineController {
 
   @PatchOperation(":id", "Update pipeline")
   @OkResponse(UpdatePipelineDto.Output)
-  @Authorize(JwtGuard)
   @ApiRequestBody(UpdatePipelineDto.Input)
   @ErrorResponses(UnauthorizedResponse, ForbiddenResponse)
   async updateCustomer(
@@ -80,7 +76,6 @@ export class PipelineController {
 
   @DeleteOperation(":id", "Delete pipeline")
   @OkResponse()
-  @Authorize(JwtGuard)
   @ErrorResponses(UnauthorizedResponse, ForbiddenResponse)
   async removeCustomer(@Param("id") id: number) {
     await this.pipelinesService.removePipelineById(id);

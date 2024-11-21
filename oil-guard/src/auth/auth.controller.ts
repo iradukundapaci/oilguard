@@ -46,7 +46,6 @@ export class AuthController {
   }
 
   @GetOperation("/logout", "Sign out a user")
-  @Authorize(JwtGuard)
   @OkResponse()
   @ErrorResponses(UnauthorizedResponse)
   async logout(@GetUser("id") id: number): Promise<GenericResponse> {

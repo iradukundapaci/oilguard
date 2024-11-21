@@ -27,7 +27,7 @@ export class SensorController {
 
   @PostOperation("", "Create new sensor")
   @CreatedResponse()
-  // @Authorize(JwtGuard)
+  //
   @ApiRequestBody(CreateSensorDto.Input)
   @ErrorResponses(UnauthorizedResponse, ForbiddenResponse)
   async createSensor(@Body() createSensorDto: CreateSensorDto.Input) {
@@ -37,7 +37,7 @@ export class SensorController {
 
   @GetOperation("", "Get all sensors")
   @PaginatedOkResponse(FetchSensorDto.Output)
-  // @Authorize(JwtGuard)
+  //
   @ErrorResponses(UnauthorizedResponse)
   async getAllSensor(
     @Query() fetchSensorDto: FetchSensorDto.Input,
@@ -48,7 +48,7 @@ export class SensorController {
 
   @GetOperation(":id", "Get sensor by id")
   @OkResponse(UpdateSensorDto.Output)
-  // @Authorize(JwtGuard)
+  //
   @ErrorResponses(UnauthorizedResponse, ForbiddenResponse)
   async getCustomer(
     @Param("id") id: number,
@@ -60,7 +60,7 @@ export class SensorController {
 
   @PatchOperation(":id", "Update sensor")
   @OkResponse(UpdateSensorDto.Output)
-  // @Authorize(JwtGuard)
+  //
   @ApiRequestBody(UpdateSensorDto.Input)
   @ErrorResponses(UnauthorizedResponse, ForbiddenResponse)
   async updateCustomer(
@@ -77,7 +77,7 @@ export class SensorController {
 
   @DeleteOperation(":id", "Delete sensor")
   @OkResponse()
-  // @Authorize(JwtGuard)
+  //
   @ErrorResponses(UnauthorizedResponse, ForbiddenResponse)
   async removeCustomer(@Param("id") id: number) {
     await this.sensorsService.removeSensorById(id);

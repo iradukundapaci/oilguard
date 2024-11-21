@@ -14,7 +14,7 @@ const DropdownNotification = () => {
   const [predictions, setPredictions] = useState<any[]>([]); // Prediction structure: [{id, timestamp}, ...]
 
   useEffect(() => {
-    const socket = io("http://localhost:8000"); // replace with your server URL
+    const socket = io("http://localhost:8000");
 
     socket.on(
       "prediction",
@@ -24,9 +24,8 @@ const DropdownNotification = () => {
           { anomaly: boolean; timestamp: number }
         >,
       ) => {
-        // Filter predictions for anomalies (where anomaly is true)
         const filteredPredictions = Object.keys(predictionsData)
-          .filter((key) => predictionsData[key].anomaly) // Only show anomalies
+          .filter((key) => predictionsData[key].anomaly)
           .map((key) => ({
             id: key,
             timestamp: predictionsData[key].timestamp,

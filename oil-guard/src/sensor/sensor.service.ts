@@ -17,8 +17,8 @@ export class SensorService {
     private readonly pipelineService: PipelineService,
   ) {}
   async createSensor(createSensorDto: CreateSensorDto.Input): Promise<void> {
-    const pipeline = await this.pipelineService.findPipelineById(
-      createSensorDto.pipeline,
+    const pipeline = await this.pipelineService.findPipelineByName(
+      createSensorDto.pipelineName,
     );
 
     const sensor = plainToInstance(Sensor, createSensorDto);

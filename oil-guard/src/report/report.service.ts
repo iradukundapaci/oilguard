@@ -24,8 +24,8 @@ export class ReportService {
     createReportDto: CreateReportDto.Input,
   ): Promise<void> {
     const user = await this.userService.findUserById(userId);
-    const pipeline = await this.pipelineService.findPipelineById(
-      +createReportDto.pipelineId,
+    const pipeline = await this.pipelineService.findPipelineByName(
+      createReportDto.pipelineName,
     );
 
     if (!user || !pipeline) {
@@ -47,6 +47,14 @@ export class ReportService {
       .createQueryBuilder("reports")
       .leftJoinAndSelect("reports.user", "user")
       .leftJoinAndSelect("reports.pipeline", "pipeline")
+      .select([
+        "reports.id",
+        "reports.description",
+        "reports.status",
+        "user.names",
+        "pipeline.name",
+        "reports.createdAt",
+      ])
       .orderBy("reports.id", "DESC");
 
     return await paginate(query, {

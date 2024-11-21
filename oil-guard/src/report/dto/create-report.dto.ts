@@ -4,7 +4,7 @@ export namespace CreateReportDto {
   export class Input {
     @IsString()
     @IsNotEmpty()
-    pipelineId: string;
+    pipelineName: string;
 
     @IsString()
     @IsNotEmpty()

@@ -1,18 +1,18 @@
 import { Metadata } from "next";
 import DefaultLayout from "@/components/Layouts/DefaultLaout";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
-import SensorsTable from "@/components/Tables/SensorsTable";
+import RepoPage from "@/components/Tables/ReportTable";
 
 export const metadata: Metadata = {
   title: "Oil Guard",
-  description: "List of sensors",
+  description: "List of reports",
 };
 
-export default function SensorPage() {
+export default function ReportsPage() {
   return (
     <DefaultLayout>
-      <Breadcrumb pageName="Sensors" />
-      <SensorsTable />
+      <Breadcrumb pageName="Reports" />
+      <RepoPage />
     </DefaultLayout>
   );
 }

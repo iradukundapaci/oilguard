@@ -52,6 +52,17 @@ export class PipelineService {
     return pipeline;
   }
 
+  async findPipelineByName(name: string): Promise<Pipeline> {
+    const pipeline = await this.pipelineRepository.findOne({
+      where: { name },
+    });
+
+    if (!pipeline) {
+      throw new NotFoundException("Pipeline not found");
+    }
+    return pipeline;
+  }
+
   async updatePipelineById(
     id: number,
     updatePipelineDto: UpdatePipelineDto.Input,

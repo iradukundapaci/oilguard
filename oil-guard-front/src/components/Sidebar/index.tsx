@@ -45,6 +45,34 @@ const menuGroups = [
         label: "Sensors",
         route: "/sensors",
       },
+      {
+        icon: (
+          <svg
+            className="fill-current"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+          >
+            <path d="M12 3C8.13 3 5 6.13 5 10c0 3.87 3.13 7 7 7s7-3.13 7-7c0-3.87-3.13-7-7-7zm-4 7c0-2.21 1.79-4 4-4s4 1.79 4 4-1.79 4-4 4-4-1.79-4-4zm-3 9v-1.5C5 15.67 8.33 14 12 14s7 1.67 7 3.5V19H5z" />
+          </svg>
+        ),
+        label: "Pipeline",
+        route: "/pipelines",
+      },
+      {
+        icon: (
+          <svg
+            className="fill-current"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+          >
+            <path d="M11 17H5V7h6v10zm-4-8h2v6H7V9zm8 8h-2V7h2v10zm4 0h-2v-4h2v4z" />
+          </svg>
+        ),
+        label: "Report",
+        route: "/report",
+      },
     ],
   },
 ];
