@@ -23,7 +23,7 @@ services:
     container_name: mqtt-simulator
     environment:
       - SENSORS=4
-      - WAIT_TIME=60
+      - WAIT_TIME=18000 # 5 hours sensor respons time
     depends_on:
       - mosquitto
     restart: always
@@ -36,9 +36,7 @@ services:
     restart: always
 
   nest-backend:
-    build:
-      context: ./oil-guard
-      dockerfile: Dockerfile
+    image: paciradukunda/oilguard
     container_name: oilguard-backend
     ports:
       - '8000:8000'
@@ -65,7 +63,7 @@ services:
 
       # JWT Configuration
       JWT_SECRET: mySecretKeyIdontWantToKeep
-      JWT_EXPIRES_IN: 1h
+      JWT_EXPIRES_IN: 1d
 
       # Swagger Configuration
       swaggerEnabled: true
@@ -75,9 +73,7 @@ services:
     restart: always
 
   next-frontend:
-    build:
-      context: ./oil-guard-front
-      dockerfile: Dockerfile
+    image: paciradukunda/oilguard-front
     container_name: oilguard-frontend
     environment:
       NEXT_PUBLIC_API_URL: http://localhost:8000
