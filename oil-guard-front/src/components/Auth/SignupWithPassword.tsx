@@ -1,7 +1,4 @@
-"use client";
-
 import * as React from "react";
-import RouterLink from "next/link";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Alert from "@mui/material/Alert";
@@ -60,7 +57,17 @@ export function SignupWithPassword(): React.JSX.Element {
     async (values: Values): Promise<void> => {
       setIsPending(true);
 
-      const error: any = await authClient.signUp(values);
+      // Ensure all fields are passed as required
+      const { firstName, lastName, email, password, role } = values;
+
+      // Call the sign-up API with the required fields
+      const error: any = await authClient.signUp({
+        firstName,
+        lastName,
+        email,
+        password,
+        role,
+      });
 
       if (error) {
         setError("root", { type: "server", message: error });

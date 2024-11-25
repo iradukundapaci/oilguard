@@ -1,7 +1,4 @@
-"use client";
-
 import * as React from "react";
-import RouterLink from "next/link";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Alert from "@mui/material/Alert";
@@ -9,7 +6,6 @@ import Button from "@mui/material/Button";
 import FormControl from "@mui/material/FormControl";
 import FormHelperText from "@mui/material/FormHelperText";
 import InputLabel from "@mui/material/InputLabel";
-import Link from "@mui/material/Link";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
@@ -21,6 +17,7 @@ import { z as zod } from "zod";
 import { authClient } from "@/lib/auth/client";
 import { useUser } from "@/hooks/use-user";
 
+// Define the schema with email and password being required
 const schema = zod.object({
   email: zod.string().min(1, { message: "Email is required" }).email(),
   password: zod.string().min(1, { message: "Password is required" }),
@@ -30,11 +27,8 @@ type Values = zod.infer<typeof schema>;
 
 export function SigninWithPassword(): React.JSX.Element {
   const router = useRouter();
-
   const { checkSession } = useUser();
-
-  const [showPassword, setShowPassword] = React.useState<boolean>();
-
+  const [showPassword, setShowPassword] = React.useState<boolean>(false);
   const [isPending, setIsPending] = React.useState<boolean>(false);
 
   const {
@@ -46,11 +40,19 @@ export function SigninWithPassword(): React.JSX.Element {
     resolver: zodResolver(schema),
   });
 
+  // Ensure that the values are passed as required fields to `signInWithPassword`
   const onSubmit = React.useCallback(
     async (values: Values): Promise<void> => {
       setIsPending(true);
 
-      const { error } = await authClient.signInWithPassword(values);
+      // Make sure the values are not undefined and contain both email and password
+      const { email, password } = values;
+
+      // Call the authClient's signIn function with non-optional email and password
+      const { error } = await authClient.signInWithPassword({
+        email,
+        password,
+      });
 
       if (error) {
         setError("root", { type: "server", message: error });
@@ -59,7 +61,6 @@ export function SigninWithPassword(): React.JSX.Element {
       }
 
       await checkSession?.();
-
       router.refresh();
     },
     [checkSession, router, setError],

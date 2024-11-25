@@ -9,6 +9,7 @@ import {
   Title,
   Tooltip,
   Legend,
+  ChartOptions,
 } from "chart.js";
 import io from "socket.io-client";
 
@@ -23,10 +24,26 @@ ChartJS.register(
   Legend,
 );
 
-const SensorGroupChart = () => {
-  const [sensorData, setSensorData] = useState({}); // Historical data for all sensors
+// Define the type for sensor data
+interface SensorData {
+  timestamp: number;
+  avg_inflow: number;
+  avg_outflow: number;
+  pressure: number;
+  flow_rate: number;
+  vibration: number;
+  temperature: number;
+  humidity: number;
+  precipitation: number;
+  count?: number; // Add count property to track how many times a value has been updated
+}
 
-  const roundToNearest5Minutes = (timestamp) => {
+const SensorGroupChart = () => {
+  const [sensorData, setSensorData] = useState<{
+    [key: string]: { [timestamp: number]: SensorData };
+  }>({}); // Historical data for all sensors
+
+  const roundToNearest5Minutes = (timestamp: number) => {
     const date = new Date(timestamp * 1000);
     date.setSeconds(0, 0);
     return date.getTime();
@@ -35,7 +52,7 @@ const SensorGroupChart = () => {
   useEffect(() => {
     const socket = io(`${process.env.NEXT_PUBLIC_API_URL}`);
 
-    socket.on("sensor-data", (newData) => {
+    socket.on("sensor-data", (newData: { [sensorId: string]: SensorData }) => {
       setSensorData((prevData) => {
         const updatedData = { ...prevData };
 
@@ -49,6 +66,7 @@ const SensorGroupChart = () => {
           );
 
           if (!updatedData[sensorId][roundedTimestamp]) {
+            // Add the timestamp explicitly in the new sensor data
             updatedData[sensorId][roundedTimestamp] = {
               ...newSensorData,
               count: 1,
@@ -56,6 +74,7 @@ const SensorGroupChart = () => {
           } else {
             const currentData = updatedData[sensorId][roundedTimestamp];
             updatedData[sensorId][roundedTimestamp] = {
+              timestamp: roundedTimestamp, // Ensure the timestamp is included
               avg_inflow:
                 (currentData.avg_inflow * currentData.count +
                   newSensorData.avg_inflow) /
@@ -102,7 +121,7 @@ const SensorGroupChart = () => {
     };
   }, []);
 
-  const renderChart = (sensorId) => {
+  const renderChart = (sensorId: string) => {
     const sensorHistory = sensorData[sensorId];
 
     if (!sensorHistory) return null;
@@ -193,7 +212,7 @@ const SensorGroupChart = () => {
       ],
     };
 
-    const options = {
+    const options: ChartOptions<"line"> = {
       responsive: true,
       plugins: {
         legend: { position: "top" },
