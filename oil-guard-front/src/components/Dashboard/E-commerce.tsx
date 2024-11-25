@@ -11,7 +11,20 @@ import SensorGroupChart from "./SensorGroupChart";
 const ECommerce: React.FC = () => {
   const [dataStats, setDataStats] = useState({
     pipelines: 0,
-    sensors: { total: 0, online: 0, offline: 0, averages: [] },
+    sensors: {
+      total: 0,
+      online: 0,
+      offline: 0,
+      averages: {
+        avgInflow: 0,
+        avgOutflow: 0,
+        avgPressure: 0,
+        avgFlowRate: 0,
+        avgTemperature: 0,
+        avgHumidity: 0,
+        avgPrecipitation: 0,
+      },
+    },
     anomalies: 0,
     reports: 0,
   });
@@ -20,7 +33,7 @@ const ECommerce: React.FC = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:8000/api/v1/analytics",
+          `${process.env.NEXT_PUBLIC_API_URL}/api/v1/analytics`,
         );
         const { pipelines, sensors, anomalies, reports } = response.data;
         console.log(response.data);

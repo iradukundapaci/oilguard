@@ -40,22 +40,25 @@ export interface ResetPasswordParams {
 class AuthClient {
   async signUp(values: SignUpParams) {
     try {
-      const response = await fetch("http://localhost:8000/api/v1/auth/signup", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/auth/signup`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: values.email,
+            password: values.password,
+            role: values.role,
+            names: `${values.firstName} ${values.lastName}`,
+          }),
         },
-        body: JSON.stringify({
-          email: values.email,
-          password: values.password,
-          role: values.role,
-          names: `${values.firstName} ${values.lastName}`,
-        }),
-      });
+      );
 
       const data = await response.json();
 
-      if (!response.status === 201) {
+      if (response.status !== 201) {
         return { error: data.message || "Signup failed" };
       }
 
@@ -78,13 +81,16 @@ class AuthClient {
 
     try {
       // Make API request to your backend's login endpoint
-      const response = await fetch("http://localhost:8000/api/v1/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/auth/login`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, password }),
         },
-        body: JSON.stringify({ email, password }),
-      });
+      );
 
       const data = await response.json();
 

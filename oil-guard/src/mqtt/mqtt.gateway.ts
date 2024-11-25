@@ -3,6 +3,8 @@ import { WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
 import { connect, MqttClient } from "mqtt";
 import { Server } from "socket.io";
 import { MqttService } from "./mqtt.service";
+import { ConfigService } from "@nestjs/config";
+import { IAppConfig } from "src/__shared__/interfaces/app-config.interface";
 
 @WebSocketGateway({
   cors: {
@@ -11,14 +13,22 @@ import { MqttService } from "./mqtt.service";
 })
 export class MqttGateway implements OnModuleInit {
   private client: MqttClient;
+  private host: string;
+  private port: string;
 
-  constructor(private readonly mqttService: MqttService) {}
+  constructor(
+    private readonly mqttService: MqttService,
+    private readonly config: ConfigService<IAppConfig>,
+  ) {
+    this.host = this.config.get("mqtt").host;
+    this.port = this.config.get("mqtt").port;
+  }
 
   @WebSocketServer()
   server: Server;
 
   onModuleInit() {
-    this.client = connect("mqtt://localhost:1883");
+    this.client = connect(`mqtt://${this.host}:${this.port}`);
 
     this.client.on("connect", () => {
       console.log("Connected to MQTT broker");

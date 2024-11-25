@@ -83,7 +83,7 @@ export default function RepoPage() {
     const fetchReports = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:8000/api/v1/reports",
+          `${process.env.NEXT_PUBLIC_API_URL}/api/v1/reports`,
           {
             params: { page: page + 1, size: rowsPerPage },
             headers: {
@@ -155,12 +155,16 @@ export default function RepoPage() {
 
   const handleCreateReport = async () => {
     try {
-      await axios.post("http://localhost:8000/api/v1/reports", newReport, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${getToken()}`,
+      await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/reports`,
+        newReport,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${getToken()}`,
+          },
         },
-      });
+      );
       setSnackbarMessage("Report created successfully!");
       setSnackbarOpen(true);
       handleCloseModal();
@@ -178,7 +182,7 @@ export default function RepoPage() {
   const handleUpdateReport = async () => {
     try {
       await axios.patch(
-        `http://localhost:8000/api/v1/reports/${newReport.id}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/reports/${newReport.id}`,
         newReport,
         {
           headers: {
@@ -203,7 +207,7 @@ export default function RepoPage() {
   const confirmDeleteReport = async () => {
     try {
       await axios.delete(
-        `http://localhost:8000/api/v1/reports/${reportToDelete?.id}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/reports/${reportToDelete?.id}`,
         {
           headers: {
             Authorization: `Bearer ${getToken()}`,

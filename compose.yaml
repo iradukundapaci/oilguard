@@ -1,0 +1,90 @@
+services:
+  postgres:
+    image: postgres:14
+    container_name: postgres-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: oilguarddb
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    restart: always
+
+  mosquitto:
+    image: eclipse-mosquitto
+    container_name: mosquitto
+    volumes:
+      - ./mosquitto/config:/mosquitto/config
+      - ./mosquitto/data:/mosquitto/data
+    restart: always
+
+  mqtt-simulator:
+    image: paciradukunda/oil-guard-mqtt-simulator
+    container_name: mqtt-simulator
+    environment:
+      - SENSORS=4
+      - WAIT_TIME=60
+    depends_on:
+      - mosquitto
+    restart: always
+
+  oilguard-model:
+    image: paciradukunda/oilguard-model
+    container_name: oilguard-model
+    depends_on:
+      - mosquitto
+    restart: always
+
+  nest-backend:
+    build:
+      context: ./oil-guard
+      dockerfile: Dockerfile
+    container_name: oilguard-backend
+    ports:
+      - '8000:8000'
+    environment:
+      PORT: 8000
+      NODE_ENV: dev
+      ALLOWED_ORIGINS: http://localhost:8001
+
+      # Seeding Configuration
+      BACKDOOR_ENABLED: true
+      BACKDOOR_USERNAME: example@gmail.com
+      BACKDOOR_PASSWORD: password
+
+      # Database Configuration
+      DB_USERNAME: postgres
+      DB_PASSWORD: password
+      DB_DATABASE: oilguarddb
+      DB_HOST: postgres-db
+      DB_PORT: 5432
+
+      # MQTT Configuration
+      MQTT_HOST: mosquitto
+      MQTT_PORT: 1883
+
+      # JWT Configuration
+      JWT_SECRET: mySecretKeyIdontWantToKeep
+      JWT_EXPIRES_IN: 1h
+
+      # Swagger Configuration
+      swaggerEnabled: true
+    depends_on:
+      - postgres
+      - mosquitto
+    restart: always
+
+  next-frontend:
+    build:
+      context: ./oil-guard-front
+      dockerfile: Dockerfile
+    container_name: oilguard-frontend
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8000
+    depends_on:
+      - nest-backend
+    restart: always
+    ports:
+      - '3000:3000'
+volumes:
+  postgres-data:

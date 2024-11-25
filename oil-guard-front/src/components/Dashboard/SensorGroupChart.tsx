@@ -33,7 +33,7 @@ const SensorGroupChart = () => {
   };
 
   useEffect(() => {
-    const socket = io("http://localhost:8000");
+    const socket = io(`${process.env.NEXT_PUBLIC_API_URL}`);
 
     socket.on("sensor-data", (newData) => {
       setSensorData((prevData) => {

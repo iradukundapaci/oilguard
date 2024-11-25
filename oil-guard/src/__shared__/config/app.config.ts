@@ -35,6 +35,10 @@ export function appConfig(): IAppConfig {
       username: process.env.BACKDOOR_USERNAME,
       password: process.env.BACKDOOR_PASSWORD,
     },
+    mqtt: {
+      host: process.env.MQTT_HOST,
+      port: process.env.MQTT_PORT,
+    },
   };
 }
 

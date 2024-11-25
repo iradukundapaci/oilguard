@@ -3,18 +3,15 @@ import Link from "next/link";
 import ClickOutside from "@/components/ClickOutside";
 import io from "socket.io-client";
 
-// Example notification template
-const notificationList = [
-  // We'll generate notifications dynamically from the predictions
-];
+const notificationList = [];
 
 const DropdownNotification = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [notifying, setNotifying] = useState(true);
-  const [predictions, setPredictions] = useState<any[]>([]); // Prediction structure: [{id, timestamp}, ...]
+  const [predictions, setPredictions] = useState<any[]>([]);
 
   useEffect(() => {
-    const socket = io("http://localhost:8000");
+    const socket = io(`${process.env.NEXT_PUBLIC_API_URL}`);
 
     socket.on(
       "prediction",

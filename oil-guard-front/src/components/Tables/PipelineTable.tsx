@@ -83,7 +83,7 @@ export default function PipelinesPage() {
     const fetchPipelines = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:8000/api/v1/pipelines",
+          `${process.env.NEXT_PUBLIC_API_URL}/api/v1/pipelines`,
           {
             params: { page: page + 1, size: rowsPerPage },
             headers: {
@@ -136,12 +136,16 @@ export default function PipelinesPage() {
 
   const handleCreatePipeline = async () => {
     try {
-      await axios.post("http://localhost:8000/api/v1/pipelines", newPipeline, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${getToken()}`,
+      await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/pipelines`,
+        newPipeline,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${getToken()}`,
+          },
         },
-      });
+      );
       setSnackbarMessage("Pipeline created successfully!");
       setSnackbarOpen(true);
       handleCloseModal();
@@ -159,7 +163,7 @@ export default function PipelinesPage() {
   const handleUpdatePipeline = async () => {
     try {
       await axios.patch(
-        `http://localhost:8000/api/v1/pipelines/${newPipeline.id}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/pipelines/${newPipeline.id}`,
         newPipeline,
         {
           headers: {
@@ -184,7 +188,7 @@ export default function PipelinesPage() {
   const confirmDeletePipeline = async () => {
     try {
       await axios.delete(
-        `http://localhost:8000/api/v1/pipelines/${pipelineToDelete?.id}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/pipelines/${pipelineToDelete?.id}`,
         {
           headers: {
             Authorization: `Bearer ${getToken()}`,

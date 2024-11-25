@@ -12,7 +12,19 @@ import { Box, Typography } from "@mui/material";
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
-const SensorAveragesBarChart = ({ averages }) => {
+interface Averages {
+  avgInflow: number;
+  avgOutflow: number;
+  avgPressure: number;
+  avgFlowRate: number;
+  avgTemperature: number;
+  avgHumidity: number;
+  avgPrecipitation: number;
+}
+
+const SensorAveragesBarChart: React.FC<{ averages: Averages }> = ({
+  averages,
+}) => {
   const labels = [
     "Avg Inflow",
     "Avg Outflow",
@@ -57,11 +69,11 @@ const SensorAveragesBarChart = ({ averages }) => {
     plugins: {
       legend: {
         display: true,
-        position: "top",
+        position: "top" as const,
       },
       tooltip: {
         callbacks: {
-          label: (context) =>
+          label: (context: any) =>
             `${context.dataset.label}: ${context.raw.toFixed(2)}`,
         },
       },

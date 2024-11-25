@@ -6,6 +6,7 @@ export interface IAppConfig {
   allowedOrigins?: string[];
   swaggerEnabled?: boolean;
   backdoor?: IBackdoorConfig;
+  mqtt?: MqttConfig;
 }
 
 interface JwtConfig {
@@ -25,4 +26,9 @@ interface IBackdoorConfig {
   enabled: boolean;
   username: string;
   password: string;
+}
+
+interface MqttConfig {
+  host: string;
+  port: string;
 }

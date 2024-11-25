@@ -60,7 +60,7 @@ export function SignupWithPassword(): React.JSX.Element {
     async (values: Values): Promise<void> => {
       setIsPending(true);
 
-      const { error } = await authClient.signUp(values);
+      const error: any = await authClient.signUp(values);
 
       if (error) {
         setError("root", { type: "server", message: error });
